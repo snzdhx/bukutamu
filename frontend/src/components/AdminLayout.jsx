@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
-import { ConfirmProvider } from './Confirm.jsx';
+import { ConfirmProvider, useConfirm } from './Confirm.jsx';
+import '../admin.css';
 
 const MENU = [
   ['/admin/dashboard', 'Dashboard'],
@@ -10,35 +11,55 @@ const MENU = [
   ['/admin/ubah-password', 'Ubah Password'],
 ];
 
+function Shell({ admin }) {
+  const nav = useNavigate();
+  const confirm = useConfirm();
+
+  async function logout(e) {
+    e.preventDefault();
+    const ok = await confirm('Anda yakin ingin logout?', { title: 'Konfirmasi Logout', okText: 'Ya, Logout' });
+    if (!ok) return;
+    try { await api.post('/auth/logout'); } catch { /* tetap keluar walau gagal */ }
+    nav('/admin/login', { replace: true });
+  }
+
+  return (
+    <div className="admin-wrapper">
+      <aside className="adm-sidebar">
+        <div className="sidebar-header"><h2>SKM Admin</h2></div>
+        <nav className="sidebar-menu">
+          {MENU.map(([to, label]) => (
+            <NavLink key={to} to={to} className={({ isActive }) => 'menu-item' + (isActive ? ' active' : '')}>{label}</NavLink>
+          ))}
+          <a href="#logout" className="menu-item menu-logout" onClick={logout}>Logout</a>
+        </nav>
+      </aside>
+      <main className="admin-content"><Outlet context={{ admin }} /></main>
+    </div>
+  );
+}
+
 export default function AdminLayout() {
   const nav = useNavigate();
   const [admin, setAdmin] = useState(null);
 
+  // Tema admin dipasang pada <body> hanya selama area admin terbuka.
+  useEffect(() => {
+    document.body.classList.add('admin-body');
+    return () => document.body.classList.remove('admin-body');
+  }, []);
+
   useEffect(() => {
     api.get('/auth/check')
-      .then((r) => setAdmin(r.data || { nama: 'Admin' }))
+      .then((r) => setAdmin(r.data || { nama: 'Administrator' }))
       .catch(() => nav('/admin/login', { replace: true }));
   }, [nav]);
 
-  async function logout() {
-    try { await api.post('/auth/logout'); } catch { /* abaikan */ }
-    nav('/admin/login', { replace: true });
-  }
-
-  if (!admin) return <div className="center-screen">Memuat…</div>;
+  if (!admin) return <div className="adm-muat">Memuat…</div>;
 
   return (
     <ConfirmProvider>
-      <div className="admin">
-        <aside className="sidebar">
-          <div className="brand">E-SKM Admin</div>
-          {MENU.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
-          <div className="spacer" />
-          <small>{admin.nama || admin.username}</small>
-          <button className="btn ghost" onClick={logout}>Keluar</button>
-        </aside>
-        <section className="content"><Outlet /></section>
-      </div>
+      <Shell admin={admin} />
     </ConfirmProvider>
   );
 }

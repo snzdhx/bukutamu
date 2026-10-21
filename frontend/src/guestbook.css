@@ -1,0 +1,974 @@
+/* ============================================================
+   FORM BUKU TAMU - dipindahkan dari bukutamu.zip (buku-tamu.html)
+   Aturan dasar dibatasi pada body.gb-body; tema Jogja memakai
+   awalan .jogja. Kelas dipasang oleh BukuTamu.jsx saat halaman
+   dibuka dan dilepas saat pindah, jadi halaman admin tidak berubah.
+   ============================================================ */
+
+.gb-body *{margin:0;padding:0;box-sizing:border-box}
+
+body.gb-body{
+    --primary-color:#2196F3;--secondary-color:#4CAF50;--danger-color:#f44336;--warning-color:#ff9800;
+    --gray-light:#f5f5f5;--gray-medium:#999;--gray-dark:#333;
+    --border-radius:8px;--box-shadow:0 2px 8px rgba(0,0,0,.1);--transition:all .3s ease;
+    display:flex;flex-direction:column;min-height:100vh;
+}
+.gb-body a{color:inherit}
+
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.gb-body .container{
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.gb-body .btn{
+    padding: 12px 32px;
+    font-size: 16px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+.gb-body .btn-primary{
+    background-color: var(--primary-color);
+    color: white;
+}
+.gb-body .btn-primary:hover{
+    background-color: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+.gb-body .btn-secondary{
+    background-color: #e0e0e0;
+    color: var(--gray-dark);
+}
+.gb-body .btn-secondary:hover{
+    background-color: #d0d0d0;
+}
+.gb-body .btn-block{
+    width: 100%;
+    display: block;
+}
+.gb-body .form-group{
+    margin-bottom: 20px;
+}
+.gb-body .form-group label{
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray-dark);
+}
+.gb-body .form-group input,
+.gb-body .form-group select,
+.gb-body .form-group textarea{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+.gb-body .form-group input:focus,
+.gb-body .form-group select:focus,
+.gb-body .form-group textarea:focus{
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+.gb-body .required{
+    color: var(--danger-color);
+}
+.gb-body .progress-text{
+    text-align: right;
+    font-size: 12px;
+    color: var(--gray-medium);
+    margin-bottom: 20px;
+}
+.gb-body .success-message{
+    background-color: #e8f5e9;
+    color: var(--secondary-color);
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.gb-body .survey-page,
+.gb-body .guestbook-page{
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 40px;
+    animation: slideIn 0.5s ease;
+}
+.gb-body .survey-content{
+    max-width: 600px;
+    margin: 0 auto;
+}
+.gb-body .survey-step h2{
+    font-size: 20px;
+    margin-bottom: 25px;
+    color: var(--gray-dark);
+    border-bottom: 2px solid var(--gray-light);
+    padding-bottom: 15px;
+}
+
+.jogja {
+    /* Palet Keraton Ngayogyakarta */
+    --jg-hijau: #0d5c3a;
+    --jg-hijau-tua: #08402a;
+    --jg-emas: #c8952c;
+    --jg-emas-muda: #f0d79a;
+    --jg-bata: #8c2f23;
+    --jg-gading: #fbf6ec;
+    --jg-kertas: #ffffff;
+    --jg-tinta: #23301f;
+    --jg-tinta-lembut: #5d6b59;
+    --jg-garis: #e2dccd;
+
+    --jg-r-kecil: 12px;
+    --jg-r-besar: 22px;
+    --jg-bayang: 0 18px 40px -22px rgba(13, 92, 58, .45);
+
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--jg-tinta);
+    background-color: var(--jg-gading);
+
+    /* Motif batik parang gading/emas, diulang (tile) di belakang konten */
+    background-image: url("./assets/images/batik-parang-bg.png");
+    background-size: 160px 160px;
+    background-position: center;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ============================================================
+   KIOSK — MOTIF BATIK LEBIH BESAR & TIDAK TERLALU RAMAI
+   ============================================================ */
+
+.jogja .container {
+    max-width: 760px;
+    padding: 28px 18px 56px;
+}
+
+/* ============================================================
+   KARTU UTAMA + GARIS PARANG DI SISI ATAS
+   ============================================================ */
+
+.jogja .guestbook-page,
+.jogja .survey-page,
+.jogja .completion-page {
+    position: relative;
+    background: var(--jg-kertas);
+    border: 1px solid var(--jg-garis);
+    border-radius: var(--jg-r-besar);
+    box-shadow: var(--jg-bayang);
+    overflow: hidden;
+    padding: 0;
+}
+
+.jogja .guestbook-page::before,
+.jogja .survey-page::before,
+.jogja .completion-page::before {
+    content: "";
+    display: block;
+    height: 9px;
+    background: repeating-linear-gradient(-45deg,
+            var(--jg-emas) 0 10px,
+            var(--jg-hijau) 10px 20px,
+            var(--jg-bata) 20px 30px);
+}
+
+/* ============================================================
+   KEPALA HALAMAN (hijau + tugu)
+   ============================================================ */
+
+.jogja .jg-head {
+    position: relative;
+    background: linear-gradient(160deg, var(--jg-hijau) 0%, var(--jg-hijau-tua) 100%);
+    color: #fff;
+    padding: 26px 26px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.jogja .jg-head-tugu {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 78px;
+    opacity: .95;
+}
+
+.jogja .jg-head-teks {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.jogja .jg-head h1 {
+    margin: 0;
+    font-size: 27px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: #fff;
+}
+
+.jogja .jg-head p {
+    margin: 7px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--jg-emas-muda);
+    max-width: 46ch;
+}
+
+.jogja .jg-head-instansi {
+    display: block;
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid rgba(240, 215, 154, .3);
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .75);
+}
+
+.jogja .jg-pulang {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    border: 1px solid rgba(240, 215, 154, .5);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .08);
+    color: var(--jg-emas-muda);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.jogja .jg-pulang:hover {
+    background: rgba(255, 255, 255, .18);
+    color: #fff;
+}
+
+/* ============================================================
+   ISI & KELOMPOK ISIAN
+   ============================================================ */
+
+.jogja .guestbook-content,
+.jogja .survey-content {
+    padding: 26px;
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+}
+
+.jogja .jg-grup {
+    margin-bottom: 26px;
+}
+
+.jogja .jg-grup-judul {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--jg-hijau);
+}
+
+.jogja .jg-grup-judul::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--jg-garis);
+}
+
+.jogja .jg-grup-judul i {
+    color: var(--jg-emas);
+}
+
+.jogja .jg-baris {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ============================================================
+   KOLOM ISIAN
+   ============================================================ */
+
+.jogja .form-group {
+    margin-bottom: 16px;
+}
+
+.jogja .form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--jg-tinta);
+}
+
+.jogja .jg-baris .jg-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    margin: 0;
+    background: var(--jg-gading);
+    border: 2px solid var(--jg-garis);
+    border-radius: var(--jg-r-kecil);
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.jogja .jg-checkbox:hover {
+    border-color: var(--jg-emas);
+    background: #fff;
+}
+
+.jogja .jg-checkbox:has(input:checked) {
+    border-color: var(--jg-hijau);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(13, 92, 58, .1);
+}
+
+.jogja .jg-checkbox input[type="checkbox"],
+.jogja .jg-checkbox input[type="radio"] {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--jg-hijau);
+    cursor: pointer;
+}
+
+/* Blok detail tambahan (rombongan / menginap hotel) yang muncul/hilang
+   tergantung jawaban Ya/Tidak di atasnya. */
+.jogja .jg-subgrup {
+    margin: 4px 0 16px;
+    padding: 16px;
+    background: var(--jg-gading);
+    border: 1.5px dashed var(--jg-garis);
+    border-radius: var(--jg-r-kecil);
+}
+
+/* Pesan bantuan yang muncul saat tamu mencentang salah satu opsi
+   disabilitas — mengajak untuk minta dibantu petugas resepsionis. */
+.jogja .jg-bantuan-disabilitas {
+    margin: 10px 0 0;
+    padding: 14px 16px;
+    background: var(--jg-emas-muda);
+    border: 1.5px solid var(--jg-emas);
+    border-radius: var(--jg-r-kecil);
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--jg-tinta);
+}
+
+.jogja .jg-bantuan-disabilitas strong {
+    color: var(--jg-hijau-tua);
+}
+
+.jogja .jg-subgrup .jg-baris:last-child,
+.jogja .jg-subgrup .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.jogja .form-group .jg-bantu {
+    display: block;
+    margin: -3px 0 7px;
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--jg-tinta-lembut);
+}
+
+.jogja .required {
+    color: var(--jg-bata);
+}
+
+.jogja .form-group input[type="text"],
+.jogja .form-group input[type="number"],
+.jogja .form-group input[type="date"],
+.jogja .form-group input[type="email"],
+.jogja .form-group input[type="tel"],
+.jogja .form-group textarea,
+.jogja .form-group select {
+    width: 100%;
+    padding: 15px 16px;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--jg-tinta);
+    background: var(--jg-gading);
+    border: 2px solid var(--jg-garis);
+    border-radius: var(--jg-r-kecil);
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.jogja .form-group textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+}
+
+.jogja .form-group input::placeholder,
+.jogja .form-group textarea::placeholder {
+    color: #a8a294;
+}
+
+.jogja .form-group input:focus,
+.jogja .form-group textarea:focus,
+.jogja .form-group select:focus:focus-visible {
+    outline: none;
+    background: #fff;
+    border-color: var(--jg-hijau);
+    box-shadow: 0 0 0 4px rgba(13, 92, 58, .12);
+}
+
+.jogja .form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%230d5c3a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 42px;
+}
+
+/* ============================================================
+   TOMBOL
+   ============================================================ */
+
+.jogja .button-group,
+.jogja .jg-aksi {
+    display: flex;
+    gap: 12px;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--jg-garis);
+}
+
+.jogja .btn {
+    flex: 1;
+    min-height: 46px;
+    padding: 13px 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+
+    border: 2px solid transparent;
+    border-radius: var(--jg-r-kecil);
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+        transform .12s ease,
+        background .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+/* Teks tombol tidak ikut bergeser ketika ikon dirender */
+.jogja .btn>span {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+/* Semua ikon tombol dibuat memiliki kotak ukuran yang konsisten */
+.jogja .btn>i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.jogja .btn:active {
+    transform: translateY(1px);
+}
+
+.jogja .btn-primary {
+    background: var(--jg-hijau);
+    color: #fff;
+    box-shadow: 0 8px 18px -10px rgba(13, 92, 58, .9);
+}
+
+.jogja .btn-primary:hover {
+    background: var(--jg-hijau-tua);
+    box-shadow: 0 10px 22px -10px rgba(13, 92, 58, 1);
+}
+
+/* Panah kanan: sejajar tepat di tengah dan tidak menempel pada teks */
+.jogja .btn-primary .fa-arrow-right {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    margin-left: 1px;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.jogja .btn-secondary {
+    flex: 0 0 auto;
+    min-width: 140px;
+    background: #fff;
+    color: var(--jg-hijau);
+    border-color: var(--jg-garis);
+}
+
+.jogja .btn-secondary:hover {
+    background: var(--jg-gading);
+    border-color: var(--jg-hijau);
+}
+
+.jogja .btn:focus-visible {
+    outline: 3px solid var(--jg-emas);
+    outline-offset: 2px;
+}
+
+/* ============================================================
+   PESAN BERHASIL (buku tamu)
+   ============================================================ */
+
+.jogja .success-message {
+    margin: 26px;
+    padding: 34px 26px;
+    text-align: center;
+    background: var(--jg-gading);
+    border: 2px dashed var(--jg-hijau);
+    border-radius: var(--jg-r-besar);
+    color: var(--jg-hijau-tua);
+}
+
+.jogja .success-message .jg-cap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    margin-bottom: 16px;
+    font-size: 34px;
+    color: #fff;
+    background: var(--jg-hijau);
+    border-radius: 50%;
+    box-shadow: 0 0 0 8px rgba(13, 92, 58, .12);
+}
+
+.jogja .success-message p {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.jogja .success-message .jg-sub {
+    margin-top: 8px;
+    font-size: 14.5px;
+    font-weight: 400;
+    color: var(--jg-tinta-lembut);
+}
+
+/* ============================================================
+   SURVEI — LANGKAH & KEMAJUAN
+   ============================================================ */
+
+.jogja .survey-step {
+    display: none;
+}
+
+.jogja .survey-step.active {
+    display: block;
+}
+
+.jogja .survey-step h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--jg-tinta);
+}
+
+.jogja .jg-langkah {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 26px;
+    background: var(--jg-gading);
+    border-bottom: 1px solid var(--jg-garis);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--jg-tinta-lembut);
+}
+
+.jogja .jg-langkah span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jogja .jg-langkah b {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e6e1d4;
+    color: var(--jg-tinta-lembut);
+    font-size: 13px;
+}
+
+.jogja .jg-langkah .jg-aktif {
+    color: var(--jg-hijau);
+}
+
+.jogja .jg-langkah .jg-aktif b {
+    background: var(--jg-hijau);
+    color: #fff;
+}
+
+.jogja .jg-langkah i {
+    color: var(--jg-garis);
+}
+
+.jogja .progress-bar {
+    height: 10px;
+    margin: 18px 0 8px;
+    background: #ece7da;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.jogja .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--jg-hijau) 0%, var(--jg-emas) 100%);
+    border-radius: 999px;
+    transition: width .35s ease;
+}
+
+.jogja .progress-text {
+    margin: 0 0 22px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--jg-tinta-lembut);
+}
+
+/* ============================================================
+   SURVEI — PERTANYAAN & PILIHAN JAWABAN
+   ============================================================ */
+
+.jogja .question-item {
+    margin-bottom: 8px;
+}
+
+.jogja .question-item h3 {
+    margin: 0 0 20px;
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 700;
+    color: var(--jg-tinta);
+}
+
+.jogja .option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jogja .option-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--jg-gading);
+    border: 2px solid var(--jg-garis);
+    border-radius: var(--jg-r-kecil);
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.jogja .option-item:hover {
+    border-color: var(--jg-emas);
+    background: #fff;
+}
+
+.jogja .option-item input[type="radio"] {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    accent-color: var(--jg-hijau);
+    cursor: pointer;
+}
+
+.jogja .option-item span {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+/* .jogja .form-group label menimpa .option-item jadi display:block (karena
+   lebih spesifik) sehingga radio & teks numpuk ke bawah, bukan sejajar.
+   Baris ini mengembalikan .option-item ke flex row dengan spesifisitas
+   yang lebih tinggi supaya menang. */
+.jogja .form-group .option-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Wajah suasana hati, ditambahkan otomatis oleh skrip kecil di survey.html */
+.jogja .option-item .jg-wajah {
+    flex: 0 0 auto;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.jogja .option-item:has(input:checked),
+.jogja .option-item.jg-terpilih {
+    border-color: var(--jg-hijau);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(13, 92, 58, .1);
+}
+
+/* Label kategori kecil di atas pertanyaan aktif (mode satu pertanyaan per layar) */
+.jogja .jg-kategori-aktif {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--jg-hijau);
+}
+
+/* Grid angka 1–10 untuk pertanyaan tingkat kepercayaan */
+.jogja .option-group-angka {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.jogja .option-item-angka {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    gap: 0;
+}
+
+/* Sembunyikan radio bawaan browser di dalam lingkaran angka — cukup lingkaran + angka yang tampil, center sempurna */
+.jogja .option-item-angka input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.jogja .option-item-angka span {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+/* Transisi halus tiap kali pertanyaan berganti */
+.jogja #unsur-container {
+    animation: jgPertanyaanMasuk .25s ease;
+}
+
+@keyframes jgPertanyaanMasuk {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   HALAMAN SELESAI
+   ============================================================ */
+
+.jogja .completion-page {
+    text-align: center;
+    padding-bottom: 34px;
+}
+
+.jogja .completion-page h1 {
+    margin: 0 0 12px;
+    font-size: 27px;
+    font-weight: 800;
+    color: var(--jg-hijau-tua);
+}
+
+.jogja .jg-selesai-isi {
+    padding: 34px 28px 0;
+}
+
+.jogja .checkmark {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 22px;
+}
+
+.jogja .checkmark circle,
+.jogja .checkmark path {
+    stroke: var(--jg-hijau);
+    stroke-width: 3;
+}
+
+.jogja .completion-message p {
+    margin: 0 0 6px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--jg-tinta-lembut);
+}
+
+.jogja .result-summary {
+    margin: 26px 0 0;
+    text-align: left;
+}
+
+.jogja .completion-page .btn {
+    max-width: 340px;
+    margin: 26px auto 0;
+}
+
+.jogja .jg-selesai-catatan {
+    margin-top: 22px;
+    padding: 16px 20px;
+    background: var(--jg-gading);
+    border-top: 1px solid var(--jg-garis);
+    font-size: 13px;
+    color: var(--jg-tinta-lembut);
+}
+
+/* ============================================================
+   KAKI HALAMAN
+   ============================================================ */
+
+.jogja .jg-kaki {
+    max-width: 760px;
+    margin: 20px auto 0;
+    padding: 0 18px 30px;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--jg-tinta-lembut);
+}
+
+.jogja .jg-kaki strong {
+    color: var(--jg-hijau);
+}
+
+/* ============================================================
+   LAYAR KECIL / KIOS POTRAIT
+   ============================================================ */
+
+@media (max-width: 640px) {
+    .jogja .container {
+        padding: 14px 12px 40px;
+    }
+
+    .jogja .jg-baris {
+        grid-template-columns: 1fr;
+    }
+
+    .jogja .jg-head {
+        padding: 22px 18px 24px;
+        gap: 14px;
+    }
+
+    .jogja .jg-head h1 {
+        font-size: 22px;
+    }
+
+    .jogja .jg-head-tugu {
+        width: 34px;
+        height: 58px;
+    }
+
+    .jogja .jg-pulang {
+        position: static;
+        margin-top: 14px;
+        align-self: flex-start;
+    }
+
+    .jogja .jg-head {
+        flex-wrap: wrap;
+    }
+
+    .jogja .guestbook-content,
+    .jogja .survey-content {
+        padding: 20px 16px;
+    }
+
+    .jogja .question-item h3 {
+        font-size: 19px;
+    }
+
+    .jogja .button-group,
+    .jogja .jg-aksi {
+        flex-direction: column-reverse;
+    }
+
+    .jogja .btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jogja *,
+    .jogja *::before {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Ringkasan konfirmasi */
+.jg-ringkasan-item{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--jg-garis,#e6e1d4)}
+.jg-ringkasan-item:last-child{border-bottom:none}
+.jg-ringkasan-item span:first-child{color:var(--jg-tinta-lembut,#6b6459);font-weight:600}
+.jg-ringkasan-item span:last-child{text-align:right;font-weight:600}
+
+/* Pesan galat/info di atas form (pengganti alert bawaan) */
+.gb-body .jg-pesan{margin:0 0 16px;padding:12px 14px;border-radius:12px;font-size:14.5px;font-weight:600}
+.gb-body .jg-pesan.err{background:#fdeaea;color:#8c2f23;border:1px solid #e4b5b5}

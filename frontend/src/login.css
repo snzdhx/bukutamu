@@ -1,0 +1,77 @@
+/* ============================================================
+   LOGIN ADMIN - dipindahkan dari bukutamu.zip (admin/login.html)
+   Dibatasi pada body.login-body; kelas dipasang oleh Login.jsx
+   saat halaman dibuka dan dilepas saat pindah.
+   ============================================================ */
+
+.login-body *{margin:0;padding:0;box-sizing:border-box}
+
+body.login-body{
+    font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    min-height:100vh;
+    background-color:#0d5c3a;
+    background-image:
+        radial-gradient(circle at 15% 20%,rgba(240,215,154,.18),transparent 45%),
+        radial-gradient(circle at 85% 85%,rgba(240,215,154,.14),transparent 45%),
+        linear-gradient(160deg,#0d5c3a 0%,#08402a 100%);
+    background-attachment:fixed;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+}
+
+.login-container{width:100%;max-width:420px}
+
+.login-card{
+    background:#fffdf8;border:1px solid #e2dccd;border-radius:22px;
+    box-shadow:0 25px 60px rgba(0,0,0,.28);padding:44px 38px;text-align:center;
+}
+
+.login-header{margin-bottom:32px}
+
+.login-logo{
+    width:76px;height:76px;border-radius:50%;object-fit:cover;background:#fff;
+    border:3px solid #c8952c;box-shadow:0 0 0 3px #fff,0 4px 10px rgba(0,0,0,.1);
+    margin:0 auto 18px;display:block;
+}
+
+.login-header h1{font-size:24px;font-weight:800;color:#23301f;margin-bottom:6px}
+.login-header p{color:#5d6b59;font-size:13.5px}
+
+.login-body .form-group{margin-bottom:18px;text-align:left}
+.login-body .form-group label{display:block;margin-bottom:7px;font-weight:700;color:#23301f;font-size:13.5px}
+.login-body .form-group input{
+    width:100%;padding:12px 15px;border:1.5px solid #e2dccd;border-radius:10px;
+    font-size:14px;font-family:inherit;background:#fbf6ec;
+    transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.login-body .form-group input:focus{
+    outline:none;border-color:#0d5c3a;background:#fff;box-shadow:0 0 0 3px rgba(13,92,58,.12);
+}
+
+.login-button{
+    width:100%;padding:13px;background:linear-gradient(135deg,#0d5c3a,#08402a);color:#fff;
+    border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+    transition:transform .15s,box-shadow .15s,filter .15s;margin-top:6px;
+}
+.login-button:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 10px 22px rgba(13,92,58,.28)}
+.login-button:active{transform:translateY(0)}
+.login-button:disabled{opacity:.7;cursor:default;transform:none;box-shadow:none}
+.login-button:focus-visible,.back-home-button:focus-visible{outline:3px solid #c8952c;outline-offset:2px}
+
+.back-home-button{
+    width:100%;padding:12px;background:transparent;color:#0d5c3a;border:1.5px solid #e2dccd;
+    border-radius:10px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;
+    transition:background .2s,border-color .2s;margin-top:14px;
+}
+.back-home-button:hover{background:#fbf6ec;border-color:#0d5c3a}
+
+.login-note{margin-top:24px;font-size:12.5px;color:#5d6b59;line-height:1.6}
+
+.login-body .error-message{
+    background:#fff5f5;color:#c53030;padding:12px 14px;border-radius:10px;margin-bottom:18px;
+    font-size:13px;text-align:left;border-left:4px solid #c53030;
+}
+
+@media (max-width:480px){
+    .login-card{padding:32px 24px}
+    .login-header h1{font-size:21px}
+}

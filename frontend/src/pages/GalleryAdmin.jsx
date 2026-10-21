@@ -2,64 +2,121 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../lib/api.js';
 import { useConfirm } from '../components/Confirm.jsx';
 
+const BATAS = 4 * 1024 * 1024;
+
 export default function GalleryAdmin() {
   const confirm = useConfirm();
-  const [rows, setRows] = useState([]);
-  const [edit, setEdit] = useState(null); // null | {} (baru) | row
-  const [msg, setMsg] = useState(null);
+  const [rows, setRows] = useState(null);
+  const [status, setStatus] = useState(null); // { err, teks }
+  const [edit, setEdit] = useState(null); // null | {} (baru) | baris
+  const [nama, setNama] = useState('');
+  const [aktif, setAktif] = useState('1');
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(() => {
-    api.get('/admin/gallery').then((r) => setRows(r.data)).catch((e) => setMsg({ err: true, text: e.message }));
+    api.get('/admin/gallery').then((r) => setRows(r.data || []))
+      .catch((e) => { setRows([]); setStatus({ err: true, teks: e.message }); });
   }, []);
-  useEffect(load, [load]);
+  useEffect(() => { load(); }, [load]);
+
+  // URL pratinjau dari file yang baru dipilih dilepas saat tidak dipakai lagi.
+  useEffect(() => {
+    if (!file) return undefined;
+    const u = URL.createObjectURL(file);
+    setPreview(u);
+    return () => URL.revokeObjectURL(u);
+  }, [file]);
+
+  function buka(r) {
+    setEdit(r || {});
+    setNama(r?.gallery_name || '');
+    setAktif(String(r ? Number(r.is_active) : 1));
+    setFile(null);
+    setPreview(r?.file_url || '');
+  }
+  function tutup() { setEdit(null); setFile(null); setPreview(''); }
 
   async function simpan(e) {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    if (!fd.get('photo')?.size) fd.delete('photo');
-    fd.set('is_active', e.target.is_active.checked ? '1' : '0');
+    if (file && file.size > BATAS) return setStatus({ err: true, teks: 'Ukuran foto maksimal 4MB.' });
+
+    const fd = new FormData();
+    fd.set('gallery_name', nama);
+    fd.set('is_active', aktif);
+    if (file) fd.set('photo', file);
+
+    setBusy(true);
     try {
-      const r = await api.postForm(edit.gallery_id ? '/admin/gallery/' + edit.gallery_id : '/admin/gallery', fd);
-      setMsg({ text: r.message }); setEdit(null); load();
-    } catch (x) { setMsg({ err: true, text: x.message }); }
+      await api.postForm(edit.gallery_id ? '/admin/gallery/' + edit.gallery_id : '/admin/gallery', fd);
+      setStatus({ teks: 'Berhasil disimpan.' });
+      tutup(); load();
+    } catch (x) { setStatus({ err: true, teks: x.message }); }
+    finally { setBusy(false); }
   }
+
   async function hapus(r) {
-    if (!(await confirm(`Hapus foto "${r.gallery_name}"?`))) return;
-    try { const x = await api.del('/admin/gallery/' + r.gallery_id); setMsg({ text: x.message }); load(); }
-    catch (e) { setMsg({ err: true, text: e.message }); }
+    const ok = await confirm('Anda yakin ingin menghapus foto ini?', { title: 'Hapus Foto', okText: 'Ya, Hapus', danger: true });
+    if (!ok) return;
+    try { await api.del('/admin/gallery/' + r.gallery_id); load(); }
+    catch (x) { setStatus({ err: true, teks: x.message }); }
   }
 
   return (
     <>
-      <div className="row between"><h1>Galeri</h1><button className="btn primary" onClick={() => setEdit({})}>+ Tambah Foto</button></div>
-      {msg && <div className={'alert ' + (msg.err ? 'err' : 'ok')}>{msg.text}</div>}
-      <div className="gallery-grid">
-        {rows.map((r) => (
-          <figure key={r.gallery_id} className={r.is_active ? '' : 'off'}>
-            <img src={r.file_url} alt={r.gallery_name} loading="lazy" />
-            <figcaption>{r.gallery_name}{!r.is_active && ' (nonaktif)'}</figcaption>
-            <div className="row">
-              <button className="btn ghost" onClick={() => setEdit(r)}>Ubah</button>
-              <button className="btn danger" onClick={() => hapus(r)}>Hapus</button>
+      <div className="top-bar">
+        <h1>Manajemen Galeri</h1>
+        <button className="adm-btn btn-primary" onClick={() => buka(null)}>+ Tambah Foto</button>
+      </div>
+
+      <div style={{ marginBottom: 10, fontSize: 14, color: status?.err ? '#c53030' : '#2f855a' }}>{status?.teks}</div>
+
+      <div className="adm-gallery-grid">
+        {rows === null && <p className="gallery-empty">Memuat data...</p>}
+        {rows && rows.length === 0 && <p className="gallery-empty">Belum ada foto. Klik "+ Tambah Foto" untuk mulai upload.</p>}
+        {rows && rows.map((r) => (
+          <div className="gallery-card" key={r.gallery_id}>
+            <img src={r.file_url} alt={r.gallery_name} />
+            <div className="gallery-card-body">
+              <div className="gallery-card-title">{r.gallery_name}</div>
+              <div className="gallery-card-status">{Number(r.is_active) === 1 ? 'Aktif' : 'Nonaktif'}</div>
+              <div className="gallery-card-actions">
+                <button className="adm-btn btn-secondary" onClick={() => buka(r)}>Edit</button>
+                <button className="adm-btn btn-secondary" onClick={() => hapus(r)}>Hapus</button>
+              </div>
             </div>
-          </figure>
+          </div>
         ))}
       </div>
 
       {edit && (
-        <div className="modal-back" onClick={() => setEdit(null)}>
-          <form className="modal form" onClick={(e) => e.stopPropagation()} onSubmit={simpan}>
-            <h2>{edit.gallery_id ? 'Ubah Foto' : 'Tambah Foto'}</h2>
-            <label>Judul<input name="gallery_name" required defaultValue={edit.gallery_name || ''} /></label>
-            <label>Foto (JPG/PNG/WEBP/GIF, maks 4MB){edit.gallery_id && ' — kosongkan jika tidak diganti'}
-              <input name="photo" type="file" accept="image/*" required={!edit.gallery_id} />
-            </label>
-            <label className="check"><input name="is_active" type="checkbox" defaultChecked={edit.is_active !== 0} /> Tampilkan di halaman publik</label>
-            <div className="row end">
-              <button type="button" className="btn ghost" onClick={() => setEdit(null)}>Batal</button>
-              <button className="btn primary">Simpan</button>
-            </div>
-          </form>
+        <div className="adm-modal" onClick={(e) => { if (e.target === e.currentTarget) tutup(); }}>
+          <div className="modal-content">
+            <span className="close-modal" onClick={tutup}>&times;</span>
+            <h2>{edit.gallery_id ? 'Edit Foto' : 'Tambah Foto'}</h2>
+            <form onSubmit={simpan}>
+              <div className="form-group">
+                <label htmlFor="gallery-name">Judul Foto</label>
+                <input type="text" id="gallery-name" required placeholder="mis. Kantor BKPP" value={nama} onChange={(e) => setNama(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="gallery-photo">File Foto (JPG/PNG/WEBP/GIF, maks 4MB — JPG/PNG otomatis dikonversi ke WebP)</label>
+                <input type="file" id="gallery-photo" accept="image/jpeg,image/png,image/webp,image/gif" required={!edit.gallery_id}
+                  onChange={(e) => setFile(e.target.files[0] || null)} />
+                {preview && <img className="upload-preview" alt="Preview" src={preview} />}
+              </div>
+              <div className="form-group">
+                <label htmlFor="gallery-status-select">Status</label>
+                <select id="gallery-status-select" value={aktif} onChange={(e) => setAktif(e.target.value)}>
+                  <option value="1">Aktif</option>
+                  <option value="0">Nonaktif</option>
+                </select>
+              </div>
+              <button type="submit" className="adm-btn btn-primary" disabled={busy}>{busy ? 'Menyimpan...' : 'Simpan'}</button>{' '}
+              <button type="button" className="adm-btn btn-secondary" onClick={tutup}>Batal</button>
+            </form>
+          </div>
         </div>
       )}
     </>

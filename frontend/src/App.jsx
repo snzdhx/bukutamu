@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import PublicLayout from './components/PublicLayout.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import Home from './pages/Home.jsx';
 import BukuTamu from './pages/BukuTamu.jsx';
@@ -12,10 +11,8 @@ import UbahPassword from './pages/UbahPassword.jsx';
 export default function App() {
   return (
     <Routes>
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/buku-tamu" element={<BukuTamu />} />
-      </Route>
+      <Route path="/" element={<Home />} />
+      <Route path="/buku-tamu" element={<BukuTamu />} />
       <Route path="/admin/login" element={<Login />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" replace />} />

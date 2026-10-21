@@ -1,0 +1,615 @@
+/* ============================================================
+   BERANDA (kiosk) - dipindahkan dari bukutamu.zip (index.html)
+   Semua aturan dibatasi pada body.kiosk-body supaya halaman
+   lain tidak ikut berubah. Kelas kiosk-body/jogja dipasang oleh
+   komponen Home.jsx saat halaman dibuka dan dilepas saat pindah.
+   ============================================================ */
+
+.kiosk-body *{margin:0;padding:0;box-sizing:border-box}
+
+body.kiosk-body{
+    --primary-color:#2196F3;--secondary-color:#4CAF50;--danger-color:#f44336;--warning-color:#ff9800;
+    --gray-light:#f5f5f5;--gray-medium:#999;--gray-dark:#333;
+    --border-radius:8px;--box-shadow:0 2px 8px rgba(0,0,0,.1);--transition:all .3s ease;
+    display:flex;flex-direction:column;min-height:100vh;
+    font-family:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+    color:#23301f;
+    background-color:#fbf6ec;
+    background-image:url("./assets/images/batik-parang-bg.png");
+    background-size:260px 260px;background-position:center;background-repeat:repeat;background-attachment:fixed;
+    -webkit-text-size-adjust:100%;
+}
+:where(.kiosk-body) a{color:inherit}
+
+.gallery-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 40px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+}
+
+.gallery-section h2 {
+    font-size: 24px;
+    color: var(--gray-dark);
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+}
+
+.gallery-subtitle {
+    font-size: 14px;
+    color: var(--gray-medium);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.gallery-placeholder {
+    width: 100%;
+    height: 200px;
+    background: var(--gray-light);
+    border: 2px dashed #ddd;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: var(--gray-medium);
+}
+
+.gallery-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.gallery-row-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gallery-track-viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.gallery-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    will-change: transform;
+}
+
+.gallery-photo-item {
+    flex: 0 0 auto;
+    width: 220px;
+    margin: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.gallery-photo-item img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-photo-item figcaption {
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--gray-dark);
+    text-align: center;
+}
+
+.gallery-arrow {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: var(--gray-dark);
+    box-shadow: var(--box-shadow);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.gallery-arrow:hover {
+    background: var(--primary-color, #f0f0f0);
+    color: white;
+}
+
+body.kiosk-body{padding:24px 16px}
+
+.kiosk-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* --- Header navigasi atas --- */
+.kiosk-topnav {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 6px 24px rgba(20, 40, 70, 0.06);
+    padding: 14px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.kiosk-topnav-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Logo kecil di navbar atas — object-fit: cover supaya mengisi penuh
+   lingkaran tanpa celah (bukan contain + scale seperti sebelumnya,
+   yang membuat logo terlihat kecil/mengambang di tengah lingkaran). */
+.kiosk-topnav-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    padding: 3px;
+    object-fit: cover;
+    object-position: center;
+    background: #fff;
+    border: 2px solid var(--warning-color);
+}
+
+.kiosk-topnav-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.kiosk-topnav-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray-medium);
+}
+
+.kiosk-topnav-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gray-dark);
+}
+
+.kiosk-topnav-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.kiosk-nav-pill {
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #f1f3f6;
+    color: var(--gray-dark);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.kiosk-nav-pill:hover {
+    background: #e4e7ec;
+}
+
+.kiosk-nav-pill.active {
+    background: #12203b;
+    color: #fff;
+}
+
+.kiosk-sheet {
+    width: 100%;
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 10px 40px rgba(20, 40, 70, 0.08);
+    padding: 32px 40px 40px;
+}
+
+/* --- Header --- */
+.kiosk-header {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 28px;
+}
+
+/* --- Logo kartu utama (header) --- */
+/* object-fit: cover supaya logo mengisi penuh lingkaran; sisi kiri-kanan
+   gambar (ranting kapas/padi di tepi) boleh sedikit terpotong karena
+   bagian penting logo (perisai & pita teks) ada di tengah dan tetap utuh. */
+.kiosk-logo-badge {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    padding: 4px;
+    object-fit: cover;
+    object-position: center;
+    background: #fff;
+    border: 3px solid var(--warning-color);
+    box-shadow: 0 0 0 3px #fff, 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.kiosk-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.kiosk-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--primary-color);
+}
+
+.kiosk-marquee {
+    width: 100%;
+    overflow: hidden;
+}
+
+.kiosk-marquee-text {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gray-dark);
+    line-height: 1.3;
+    padding-left: 100%;
+    animation: kiosk-marquee-scroll 16s linear infinite;
+}
+
+.kiosk-marquee:hover .kiosk-marquee-text {
+    animation-play-state: paused;
+}
+
+@keyframes kiosk-marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.kiosk-header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.kiosk-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.3;
+}
+
+.kiosk-clock-date {
+    font-size: 12px;
+    color: var(--gray-medium);
+}
+
+.kiosk-clock-time {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.kiosk-admin-link {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    background: var(--gray-light);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.kiosk-admin-link:hover {
+    background: #e8e8e8;
+    color: var(--gray-medium);
+}
+
+.kiosk-divider {
+    height: 1px;
+    background: #ececec;
+    margin: 24px 0 28px;
+}
+
+/* --- Kartu intro (layanan pelanggan + info gratifikasi) --- */
+.kiosk-intro-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 900px) {
+    .kiosk-intro-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kiosk-intro-card {
+    background: linear-gradient(135deg, #eef9f0 0%, #fdfaf0 100%);
+    border: 1px solid #e7f3e9;
+    border-radius: 20px;
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kiosk-intro-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--warning-color);
+    margin-bottom: 10px;
+}
+
+.kiosk-intro-card p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--gray-dark);
+    margin: 0 0 10px;
+    text-wrap: pretty;
+    /* hindari kata yatim di akhir baris */
+}
+
+.kiosk-intro-card .kiosk-intro-lead {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.kiosk-intro-steps {
+    list-style: none;
+    counter-reset: langkah;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.kiosk-intro-steps li {
+    counter-increment: langkah;
+    position: relative;
+    padding-left: 38px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--gray-dark);
+}
+
+.kiosk-intro-steps li::before {
+    content: counter(langkah);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--warning-color);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
+}
+
+.kiosk-notice-card {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.kiosk-notice-banner {
+    align-self: stretch;
+    background: var(--danger-color);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.kiosk-notice-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.kiosk-notice-body i {
+    color: var(--danger-color);
+    font-size: 22px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.kiosk-notice-body p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--gray-dark);
+}
+
+.kiosk-notice-qr {
+    padding-top: 16px;
+    border-top: 1px dashed #eee;
+    width: 100%;
+}
+
+.kiosk-notice-qr img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    /* jaga proporsi, jangan sampai QR gepeng/terpotong */
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+.kiosk-notice-qr span {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-medium);
+    margin-top: 10px;
+}
+
+/* --- Tombol aksi utama (besar & ramah sentuh) --- */
+.kiosk-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 36px;
+}
+
+@media (max-width: 700px) {
+    .kiosk-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kiosk-action-card {
+    font-family: inherit;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    border-radius: 18px;
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-align: left;
+    transition: var(--transition);
+}
+
+a.kiosk-action-card {
+    text-decoration: none;
+    color: inherit;
+}
+
+.kiosk-action-card:hover {
+    transform: translateY(-3px);
+}
+
+.kiosk-action-card:active {
+    transform: scale(0.98);
+}
+
+.kiosk-action-guest {
+    background: #eefbf3;
+    border-color: #d5f2e0;
+}
+
+.kiosk-action-survey {
+    background: #eaf3ff;
+    border-color: #d7e7fc;
+}
+
+.kiosk-action-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.kiosk-action-guest .kiosk-action-icon {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+.kiosk-action-survey .kiosk-action-icon {
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+}
+
+.kiosk-action-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.kiosk-action-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-dark);
+}
+
+.kiosk-action-sub {
+    font-size: 13px;
+    color: var(--gray-medium);
+}
+
+.kiosk-gallery {
+    margin-top: 10px;
+}
+
+/* --- Footer --- */
+.kiosk-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: var(--gray-medium);
+}
+
+@media (max-width:768px){.kiosk-body .gallery-section{padding:25px}}
+@media (max-width:480px){
+  .kiosk-body .gallery-section{padding:15px}
+  .kiosk-body .gallery-placeholder{height:150px;font-size:48px}
+  .kiosk-body .gallery-photo-item{width:150px}
+  .kiosk-body .gallery-photo-item img{height:110px}
+  .kiosk-body .gallery-arrow{width:32px;height:32px;font-size:13px}
+}
